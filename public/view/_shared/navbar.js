@@ -3,12 +3,17 @@ export function renderNavbar() {
     if (!navbar || !navbar.hasAttribute('data-shared-navbar')) return;
 
     navbar.innerHTML = `
-        <div class="container-fluid" style="display:flex; align-items:center; justify-content:space-between; width:100%; padding:0 clamp(0.75rem, 2vw, 2rem); height:4rem;">
-            <a href="/home" class="atn-logo" style="font-size:1.25rem; font-weight:700; color:#fff; text-decoration:none; display:flex; align-items:center; gap:0.5rem;">
-                <span><span style="color:#ffb53e;">Atena</span><span style="color:#fff;">System</span></span>
-            </a>
-            <a href="http://rogalvaom.page.gd/" target="_blank" rel="noopener noreferrer" aria-label="@rogalvaom">
-                <img src="/public/img/rogalvaom.png" alt="@rogalvaom" style="display:block; width:clamp(100px, 10vw, 150px); height:auto;">
+        <div class="atn-navbar-inner">
+            <div class="atn-navbar-brand">
+                <button class="atn-sidebar-toggle" id="sidebar-toggle" type="button" aria-label="Abrir menu" aria-expanded="false" aria-controls="atn-sidebar">
+                    <i class="fas fa-bars" aria-hidden="true"></i>
+                </button>
+                <a href="/home" class="atn-logo" aria-label="AtenaSystem - Início">
+                    <span><span class="atn-logo-accent">Atena</span><span>System</span></span>
+                </a>
+            </div>
+            <a class="atn-navbar-partner" href="http://rogalvaom.page.gd/" target="_blank" rel="noopener noreferrer" aria-label="@rogalvaom">
+                <img src="/public/img/rogalvaom.png" alt="@rogalvaom">
             </a>
         </div>
     `;

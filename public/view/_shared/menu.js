@@ -52,10 +52,72 @@ function renderPageEyebrow() {
     heading.parentElement.insertBefore(eyebrow, heading);
 }
 
+function initializeResponsiveMenu() {
+    const sidebar = document.querySelector('.atn-sidebar');
+    const toggle = document.getElementById('sidebar-toggle');
+    if (!sidebar || !toggle) return;
+
+    sidebar.id = 'atn-sidebar';
+    sidebar.querySelector('.atn-sidebar-header')?.remove();
+    sidebar.querySelector('.atn-sidebar-close')?.remove();
+
+    let overlay = document.querySelector('.atn-sidebar-overlay');
+    if (!overlay) {
+        overlay = document.createElement('div');
+        overlay.className = 'atn-sidebar-overlay';
+        overlay.id = 'sidebar-overlay';
+        overlay.setAttribute('aria-hidden', 'true');
+        document.body.append(overlay);
+    }
+
+    toggle.setAttribute('aria-controls', sidebar.id);
+
+    function closeMenu(restoreFocus = false) {
+        const wasOpen = sidebar.classList.contains('show');
+        sidebar.classList.remove('show');
+        overlay.classList.remove('show');
+        overlay.setAttribute('aria-hidden', 'true');
+        document.body.classList.remove('atn-sidebar-open');
+        toggle.setAttribute('aria-expanded', 'false');
+        toggle.setAttribute('aria-label', 'Abrir menu');
+        if (restoreFocus && wasOpen) toggle.focus();
+    }
+
+    function openMenu() {
+        sidebar.classList.add('show');
+        overlay.classList.add('show');
+        overlay.setAttribute('aria-hidden', 'false');
+        document.body.classList.add('atn-sidebar-open');
+        toggle.setAttribute('aria-expanded', 'true');
+        toggle.setAttribute('aria-label', 'Fechar menu');
+        sidebar.querySelector('a')?.focus();
+    }
+
+    toggle.addEventListener('click', function() {
+        if (sidebar.classList.contains('show')) {
+            closeMenu();
+        } else {
+            openMenu();
+        }
+    });
+    overlay.addEventListener('click', function() {
+        closeMenu(true);
+    });
+    sidebar.addEventListener('click', function(event) {
+        if (event.target.closest('a') && window.matchMedia('(max-width: 767.98px)').matches) {
+            closeMenu();
+        }
+    });
+    document.addEventListener('keydown', function(event) {
+        if (event.key === 'Escape') closeMenu(true);
+    });
+}
+
 document.addEventListener('DOMContentLoaded', function() {
     renderNavbar();
     renderMenu();
     renderPageEyebrow();
+    initializeResponsiveMenu();
 });
 
 document.addEventListener('atn:content-loaded', renderPageEyebrow);

@@ -242,6 +242,31 @@ body {
     transition: all var(--atn-transition-fast);
 }
 
+.atn-navbar-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    min-width: 0;
+    height: var(--atn-header-height);
+    padding: 0 clamp(0.75rem, 2vw, 2rem);
+}
+
+.atn-sidebar-toggle {
+    color: #ffffff;
+}
+
+.atn-navbar-partner {
+    flex-shrink: 0;
+}
+
+.atn-navbar-partner img {
+    display: block;
+    width: clamp(88px, 10vw, 140px);
+    max-width: 32vw;
+    height: auto;
+}
+
 .atn-sidebar-toggle:hover {
     background-color: var(--atn-gray-100);
     color: var(--atn-gray-900);
@@ -537,7 +562,7 @@ body {
     right: 0;
     bottom: 0;
     background-color: rgba(0, 0, 0, 0.5);
-    z-index: calc(var(--atn-z-modal) - 10);
+    z-index: 1010;
     opacity: 0;
     visibility: hidden;
     transition: all var(--atn-transition-fast);
@@ -546,6 +571,10 @@ body {
 .atn-sidebar-overlay.show {
     opacity: 1;
     visibility: visible;
+}
+
+body.atn-sidebar-open {
+    overflow: hidden;
 }
 
 /* Cards */
