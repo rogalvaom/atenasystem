@@ -19,9 +19,6 @@ function loadMenu(activeRoute) {
                     <span class="icon-bar"></span>
                 </button>
                 <a class="navbar-brand" href="/home"><span style="color:orange">Atena</span>System</a>
-                <a href="http://hubis.com.br/" target="_blank">
-                    <img src="/public/img/hubis.png" id="logo-hubis">
-                </a>
             </div>
         </div>
     </nav>
