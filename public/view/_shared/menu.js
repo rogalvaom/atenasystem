@@ -1,4 +1,5 @@
 import { renderNavbar } from './navbar.js';
+import './auth.js';
 
 function renderMenu() {
     const nav = document.getElementById('atn-sidebar-nav');
@@ -15,9 +16,27 @@ function renderMenu() {
             <li class="atn-menu-item"><a href="/presenca"><i class="fas fa-calendar"></i> Presença</a></li>
             <li class="atn-menu-item"><a href="/certificado"><i class="fas fa-file-pdf"></i> Certificado</a></li>
             <li class="atn-menu-item"><a href="/relatorio"><i class="fas fa-bar-chart"></i> Relatório</a></li>
-            <li class="atn-menu-item logout"><a href="#" onclick="if(window.atnAuth) window.atnAuth.logout(); else window.location.assign('/login'); return false;"><i class="fas fa-power-off"></i> Logout</a></li>
+            <li class="atn-menu-item logout"><a id="atn-logout-link" href="/login"><i class="fas fa-power-off"></i> Logout</a></li>
         </ul>
     `;
+
+    const logoutLink = nav.querySelector('#atn-logout-link');
+    logoutLink?.addEventListener('click', async function(event) {
+        event.preventDefault();
+        logoutLink.setAttribute('aria-busy', 'true');
+
+        try {
+            const response = await fetch('/api/logout', {
+                method: 'POST',
+                credentials: 'same-origin'
+            });
+            if (!response.ok) throw new Error('Falha ao encerrar a sessão.');
+            window.location.replace('/login');
+        } catch {
+            logoutLink.removeAttribute('aria-busy');
+            alert('Não foi possível encerrar a sessão. Tente novamente.');
+        }
+    });
 }
 
 function renderActiveMenuItem() {
