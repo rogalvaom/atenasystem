@@ -1,6 +1,4 @@
 $(document).ready(function() {
-    loadMenu('relatorio/reuniao');
-
     var inputDataInicial = $('#inputDataInicialReuniao');
     var inputDataFinal = $('#inputDataFinalReuniao');
     var formRelatorio = $('#formRelatorioReuniao');
@@ -32,13 +30,12 @@ $(document).ready(function() {
                 var presencas = parseInt(item.presencas) || 0;
                 var ausencias = parseInt(item.ausencias) || 0;
                 var justificadas = parseInt(item.justificadas) || 0;
-                var cor = ausencias < 4 ? 'green' : 'red';
-
                 var row = $('<tr></tr>');
-                row.append('<td style="text-align:left; font-weight:bold; color:' + cor + ';">' + item.nome + '</td>');
-                row.append('<td>' + presencas + '</td>');
-                row.append('<td>' + ausencias + '</td>');
-                row.append('<td>' + justificadas + '</td>');
+                var cor = ausencias < 4 ? 'green' : 'red';
+                row.append($('<td></td>').css({ 'text-align': 'left', 'font-weight': 'bold', color: cor }).text(item.nome));
+                row.append($('<td></td>').text(presencas));
+                row.append($('<td></td>').text(ausencias));
+                row.append($('<td></td>').text(justificadas));
                 tableRelatorioBody.append(row);
             });
             relatorioContainer.show();

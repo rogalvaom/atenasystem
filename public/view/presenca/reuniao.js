@@ -1,6 +1,4 @@
 $(document).ready(function() {
-    loadMenu('presenca/reuniao');
-
     var tableTutoresBody = $('#tableTutores tbody');
     var formCadastro = $('#formCadastroReuniao');
     var messageStatus = $('#messageStatusReuniao');
@@ -11,8 +9,14 @@ $(document).ready(function() {
     if (tutores && Array.isArray(tutores)) {
         tutores.forEach(function(t) {
             var row = $('<tr></tr>');
-            row.append('<td style="text-align:left; vertical-align:middle;">' + t.nome + '</td>');
-            row.append('<td style="text-align:center; vertical-align:middle;"><input type="checkbox" name="presente[]" value="' + t.id + '" style="transform: scale(1.3);"></td>');
+            row.append($('<td></td>').css({ 'text-align': 'left', 'vertical-align': 'middle', padding: '0.75rem' }).text(t.nome));
+            var checkbox = $('<input>', {
+                type: 'checkbox',
+                name: 'presente[]',
+                value: t.id,
+                'aria-label': 'Marcar ' + t.nome + ' como presente'
+            }).css({ transform: 'scale(1.2)' });
+            row.append($('<td></td>').css({ 'text-align': 'center', 'vertical-align': 'middle', padding: '0.75rem' }).append(checkbox));
             tableTutoresBody.append(row);
         });
     }

@@ -1,6 +1,4 @@
 $(document).ready(function() {
-    loadMenu('presenca/monitore');
-
     var selectSala = $('#selectSalaMonitore');
     var selectMonitore = $('#selectMonitore');
     var formCadastro = $('#formCadastroMonitore');
@@ -12,7 +10,7 @@ $(document).ready(function() {
     if (salas && Array.isArray(salas)) {
         selectSala.append('<option value="">Selecione uma sala</option>');
         salas.forEach(function(s) {
-            selectSala.append('<option value="' + s.id + '">' + s.nome + '</option>');
+            selectSala.append($('<option></option>').val(s.id).text(s.nome));
         });
     }
 
@@ -22,7 +20,7 @@ $(document).ready(function() {
     if (monitores && Array.isArray(monitores)) {
         selectMonitore.append('<option value="">Selecione um monitore</option>');
         monitores.forEach(function(m) {
-            selectMonitore.append('<option value="' + m.id + '">' + m.nome + '</option>');
+            selectMonitore.append($('<option></option>').val(m.id).text(m.nome));
         });
     }
 

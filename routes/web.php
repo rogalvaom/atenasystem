@@ -23,6 +23,7 @@ $web = [
 
         // Disciplina
         ['/disciplina', '/disciplina/index.html'],
+        ['/disciplina/criar', '/disciplina/criar.html'],
         ['/disciplina/editar', '/disciplina/editar.html'],
 
         // Monitore
@@ -32,11 +33,11 @@ $web = [
         ['/monitore/presenca', '/monitore/editar_presenca.html'],
 
         // Presença
-        ['/presenca', '/presenca/cadastro_alune.html'], 
-        ['/presenca/alune', '/presenca/cadastro_alune.html'], 
-        ['/presenca/monitore', '/presenca/cadastro_monitore.html'], 
-        ['/presenca/reuniao', '/presenca/cadastro_reuniao.html'], 
-        ['/presenca/tutore', '/presenca/cadastro_tutore.html'], 
+        ['/presenca', '/presenca/alune.html'],
+        ['/presenca/alune', '/presenca/alune.html'],
+        ['/presenca/monitore', '/presenca/monitore.html'],
+        ['/presenca/reuniao', '/presenca/reuniao.html'],
+        ['/presenca/tutore', '/presenca/tutore.html'],
 
         // Relatórios
         ['/relatorio', '/relatorio/alune.html'], 
@@ -52,6 +53,7 @@ $web = [
 
         // Sala
         ['/sala', '/sala/index.html'],
+        ['/sala/criar', '/sala/criar.html'],
         ['/sala/editar', '/sala/editar.html'],
 
         // Tutore

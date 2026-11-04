@@ -1,6 +1,4 @@
 $(document).ready(function() {
-    loadMenu('relatorio');
-
     var selectCodSala = $('#selectCodSala');
     var inputDataInicial = $('#inputDataInicial');
     var inputDataFinal = $('#inputDataFinal');
@@ -14,7 +12,7 @@ $(document).ready(function() {
     if (salas && Array.isArray(salas)) {
         selectCodSala.append('<option value="">Selecione uma sala</option>');
         salas.forEach(function(s) {
-            selectCodSala.append('<option value="' + s.id + '">' + s.nome + '</option>');
+            selectCodSala.append($('<option></option>').val(s.id).text(s.nome));
         });
 
         var urlParams = new URLSearchParams(window.location.search);
@@ -48,14 +46,13 @@ $(document).ready(function() {
                 var justificado = parseInt(alune.justificado) || 0;
                 var total = presencas + ausencias + justificado;
                 var porcentagem = total > 0 ? ((presencas + justificado) / total) * 100 : 0;
-                var cor = porcentagem >= 70 ? 'green' : 'red';
-
                 var row = $('<tr></tr>');
-                row.append('<td style="text-align:left; font-weight: bold; color:' + cor + ';">' + alune.nome + '</td>');
-                row.append('<td>' + presencas + '</td>');
-                row.append('<td>' + ausencias + '</td>');
-                row.append('<td>' + justificado + '</td>');
-                row.append('<td style="font-weight: bold; color:' + cor + ';">' + porcentagem.toFixed(2) + '%</td>');
+                var cor = porcentagem >= 70 ? 'green' : 'red';
+                row.append($('<td></td>').css({ 'text-align': 'left', 'font-weight': 'bold', color: cor }).text(alune.nome));
+                row.append($('<td></td>').text(presencas));
+                row.append($('<td></td>').text(ausencias));
+                row.append($('<td></td>').text(justificado));
+                row.append($('<td></td>').css({ 'font-weight': 'bold', color: cor }).text(porcentagem.toFixed(2) + '%'));
                 tableRelatorioBody.append(row);
             });
             relatorioContainer.show();

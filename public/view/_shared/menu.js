@@ -20,7 +20,42 @@ function renderMenu() {
     `;
 }
 
+const pageSections = [
+    { path: '/home', label: 'Visão geral', icon: 'fa-house' },
+    { path: '/alune', label: 'Gestão de alunes', icon: 'fa-graduation-cap' },
+    { path: '/comissao', label: 'Controle de faltas', icon: 'fa-address-book' },
+    { path: '/disciplina', label: 'Gestão acadêmica', icon: 'fa-book-open' },
+    { path: '/monitore', label: 'Gestão de monitores', icon: 'fa-user-circle' },
+    { path: '/representante', label: 'Equipe de coordenação', icon: 'fa-user-plus' },
+    { path: '/sala', label: 'Gestão de salas', icon: 'fa-university' },
+    { path: '/tutore', label: 'Gestão de tutores', icon: 'fa-user' },
+    { path: '/presenca', label: 'Controle de presença', icon: 'fa-clipboard-check' },
+    { path: '/certificado', label: 'Emissão de certificados', icon: 'fa-award' },
+    { path: '/relatorio', label: 'Indicadores de frequência', icon: 'fa-chart-column' }
+];
+
+function renderPageEyebrow() {
+    const main = document.querySelector('.atn-main');
+    if (!main || main.querySelector('.atn-page-eyebrow, .report-eyebrow, .attendance-eyebrow, .certificate-eyebrow')) return;
+
+    const path = window.location.pathname.replace(/\/+$/, '') || '/';
+    const section = pageSections.find(item => path === item.path || path.startsWith(`${item.path}/`));
+    const heading = main.querySelector('h2, h1');
+    if (!section || !heading || !heading.parentElement) return;
+
+    const eyebrow = document.createElement('p');
+    eyebrow.className = 'atn-page-eyebrow';
+    const icon = document.createElement('i');
+    icon.className = `fas ${section.icon}`;
+    icon.setAttribute('aria-hidden', 'true');
+    eyebrow.append(icon, document.createTextNode(section.label));
+    heading.parentElement.insertBefore(eyebrow, heading);
+}
+
 document.addEventListener('DOMContentLoaded', function() {
     renderNavbar();
     renderMenu();
+    renderPageEyebrow();
 });
+
+document.addEventListener('atn:content-loaded', renderPageEyebrow);

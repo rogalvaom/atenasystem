@@ -1,6 +1,4 @@
 $(document).ready(function() {
-    loadMenu('presenca/alune');
-
     var selectSala = $('#selectSala');
     var formBuscarSala = $('#formBuscarSala');
     var formCriarPresenca = $('#formCriarPresenca');
@@ -16,7 +14,7 @@ $(document).ready(function() {
         if (salas && Array.isArray(salas)) {
             selectSala.append('<option value="">Selecione uma sala</option>');
             salas.forEach(function(sala) {
-                selectSala.append('<option value="' + sala.id + '">' + sala.nome + '</option>');
+                selectSala.append($('<option></option>').val(sala.id).text(sala.nome));
             });
 
             var urlParams = new URLSearchParams(window.location.search);
@@ -43,8 +41,14 @@ $(document).ready(function() {
         if (alunes && Array.isArray(alunes) && alunes.length > 0) {
             alunes.forEach(function(alune) {
                 var row = $('<tr></tr>');
-                row.append('<td style="text-align:left; vertical-align:middle;">' + alune.nome + '</td>');
-                row.append('<td style="text-align:center; vertical-align:middle;"><input type="checkbox" name="presente[]" value="' + alune.id + '" style="transform: scale(1.3);"></td>');
+                row.append($('<td></td>').css({ 'text-align': 'left', 'vertical-align': 'middle', padding: '0.75rem' }).text(alune.nome));
+                var checkbox = $('<input>', {
+                    type: 'checkbox',
+                    name: 'presente[]',
+                    value: alune.id,
+                    'aria-label': 'Marcar ' + alune.nome + ' como presente'
+                }).css({ transform: 'scale(1.2)' });
+                row.append($('<td></td>').css({ 'text-align': 'center', 'vertical-align': 'middle', padding: '0.75rem' }).append(checkbox));
                 tableAlunesBody.append(row);
             });
             formPresencaContainer.show();

@@ -1,6 +1,4 @@
 $(document).ready(function() {
-    loadMenu('presenca/tutore');
-
     var selectSala = $('#selectSalaTutore');
     var selectTutore = $('#selectTutore');
     var formCadastro = $('#formCadastroTutore');
@@ -12,7 +10,7 @@ $(document).ready(function() {
     if (salas && Array.isArray(salas)) {
         selectSala.append('<option value="">Selecione uma sala</option>');
         salas.forEach(function(s) {
-            selectSala.append('<option value="' + s.id + '">' + s.nome + '</option>');
+            selectSala.append($('<option></option>').val(s.id).text(s.nome));
         });
     }
 
@@ -22,7 +20,7 @@ $(document).ready(function() {
     if (tutores && Array.isArray(tutores)) {
         selectTutore.append('<option value="">Selecione um tutore</option>');
         tutores.forEach(function(t) {
-            selectTutore.append('<option value="' + t.id + '">' + t.nome + '</option>');
+            selectTutore.append($('<option></option>').val(t.id).text(t.nome));
         });
     }
 

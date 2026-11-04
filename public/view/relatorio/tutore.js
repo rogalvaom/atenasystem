@@ -1,6 +1,4 @@
 $(document).ready(function() {
-    loadMenu('relatorio/tutore');
-
     var selectCodSala = $('#selectCodSalaTutore');
     var inputDataInicial = $('#inputDataInicialTutore');
     var inputDataFinal = $('#inputDataFinalTutore');
@@ -14,7 +12,7 @@ $(document).ready(function() {
     if (salas && Array.isArray(salas)) {
         selectCodSala.append('<option value="">Selecione uma sala</option>');
         salas.forEach(function(s) {
-            selectCodSala.append('<option value="' + s.id + '">' + s.nome + '</option>');
+            selectCodSala.append($('<option></option>').val(s.id).text(s.nome));
         });
 
         var urlParams = new URLSearchParams(window.location.search);
@@ -48,8 +46,8 @@ $(document).ready(function() {
                 if (presencas > 0) {
                     temLinha = true;
                     var row = $('<tr></tr>');
-                    row.append('<td style="text-align:left;">' + item.nome + '</td>');
-                    row.append('<td>' + presencas + '</td>');
+                    row.append($('<td></td>').css('text-align', 'left').text(item.nome));
+                    row.append($('<td></td>').text(presencas));
                     tableRelatorioBody.append(row);
                 }
             });
