@@ -20,6 +20,26 @@ function renderMenu() {
     `;
 }
 
+function renderActiveMenuItem() {
+    const nav = document.getElementById('atn-sidebar-nav');
+    if (!nav) return;
+
+    const currentPath = window.location.pathname.replace(/\/+$/, '') || '/';
+    const candidates = Array.from(nav.querySelectorAll('a[href^="/"]'))
+        .map(link => ({
+            link: link,
+            path: new URL(link.href, window.location.origin).pathname.replace(/\/+$/, '') || '/'
+        }))
+        .filter(item => currentPath === item.path || currentPath.startsWith(`${item.path}/`))
+        .sort((first, second) => second.path.length - first.path.length);
+
+    const activeItem = candidates[0];
+    if (!activeItem) return;
+
+    activeItem.link.classList.add('active');
+    activeItem.link.setAttribute('aria-current', currentPath === activeItem.path ? 'page' : 'location');
+}
+
 const pageSections = [
     { path: '/home', label: 'Visão geral', icon: 'fa-house' },
     { path: '/alune', label: 'Gestão de alunes', icon: 'fa-graduation-cap' },
@@ -116,6 +136,7 @@ function initializeResponsiveMenu() {
 document.addEventListener('DOMContentLoaded', function() {
     renderNavbar();
     renderMenu();
+    renderActiveMenuItem();
     renderPageEyebrow();
     initializeResponsiveMenu();
 });

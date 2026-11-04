@@ -24,12 +24,12 @@ $(document).ready(function() {
             });
 
             if (linhas.length && !linhasVisiveis) {
-                $('#tabela-alunes').append('<tr id="nenhum-resultado-busca"><td colspan="3" style="padding:2rem; text-align:center; color:#9ca3af;">Nenhum alune encontrado.</td></tr>');
+                $('#tabela-alunes').append('<tr id="nenhum-resultado-busca"><td colspan="4" style="padding:2rem; text-align:center; color:#9ca3af;">Nenhum alune encontrado.</td></tr>');
             }
         });
         $(document).on('click', '.btn-excluir-alune', function() {
             var row = $(this).closest('tr');
-            excluirAlune($(this).data('id'), row.children('td').first().text());
+            excluirAlune($(this).data('id'), row.data('name'));
         });
     }
 
@@ -92,8 +92,10 @@ function carregarTabelaAlunes() {
         var html = '';
         alunes.forEach(function(alune) {
             var salaNome = salasPorId[String(alune.cod_sala)] || 'Sala ' + (alune.cod_sala || '');
-            html += `<tr data-search="${escaparHtml(alune.nome + ' ' + salaNome)}" style="border-bottom:1px solid #f3f4f6; transition:background 0.15s;">
-                <td style="padding:1rem; font-weight:500; color:#111827;">${escaparHtml(alune.nome)}</td>
+            var nome = escaparHtml(alune.nome);
+            html += `<tr data-name="${nome}" data-search="${escaparHtml(alune.nome + ' ' + salaNome + ' ' + alune.id)}" style="border-bottom:1px solid #f3f4f6; transition:background 0.15s;">
+                <td style="padding:1rem; color:#9ca3af; font-size:0.75rem;">${escaparHtml(alune.id)}</td>
+                <td style="padding:1rem; font-weight:500; color:#111827;">${nome}</td>
                 <td style="padding:1rem; color:#6b7280;">${escaparHtml(salaNome)}</td>
                 <td style="padding:1rem; text-align:center;">
                     <a href="/alune/editar?alune=${encodeURIComponent(alune.id)}" style="display:inline-flex; align-items:center; gap:0.25rem; padding:0.35rem 0.75rem; border-radius:0.5rem; background:#fffbeb; color:#92400e; font-size:0.75rem; font-weight:600; text-decoration:none; border:1px solid #fde68a; transition:all 0.15s;" onmouseover="this.style.background='#fef3c7'" onmouseout="this.style.background='#fffbeb'">
@@ -110,7 +112,7 @@ function carregarTabelaAlunes() {
         });
         $('#tabela-alunes').html(html);
     } else {
-        $('#tabela-alunes').html('<tr><td colspan="3" style="padding:2rem; text-align:center; color:#9ca3af;">Nenhum alune cadastrado.</td></tr>');
+        $('#tabela-alunes').html('<tr><td colspan="4" style="padding:2rem; text-align:center; color:#9ca3af;">Nenhum alune cadastrado.</td></tr>');
     }
 }
 

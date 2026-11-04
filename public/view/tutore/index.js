@@ -29,7 +29,7 @@ $(document).ready(function() {
         });
         $(document).on('click', '.btn-excluir-tutore', function() {
             var row = $(this).closest('tr');
-            excluirTutore($(this).data('id'), row.children('td').first().text());
+            excluirTutore($(this).data('id'), row.data('name'));
         });
     }
 
@@ -214,10 +214,11 @@ function carregarTabelaTutores() {
         tutores.forEach(function(tutore) {
             var disciplinaNome = disciplinasPorId[String(tutore.cod_disciplina)] || 'Disciplina ' + (tutore.cod_disciplina || '');
             var searchText = escaparHtml([tutore.nome, disciplinaNome, tutore.id].join(' '));
-            html += `<tr data-search="${searchText}" style="border-bottom:1px solid #f3f4f6; transition:background 0.15s;">
-                <td style="padding:1rem; font-weight:500; color:#111827;">${escaparHtml(tutore.nome)}</td>
+            var nome = escaparHtml(tutore.nome);
+            html += `<tr data-name="${nome}" data-search="${searchText}" style="border-bottom:1px solid #f3f4f6; transition:background 0.15s;">
+                <td style="padding:1rem; color:#9ca3af; font-size:0.75rem;">${escaparHtml(tutore.id)}</td>
+                <td style="padding:1rem; font-weight:500; color:#111827;">${nome}</td>
                 <td style="padding:1rem; color:#6b7280;">${escaparHtml(disciplinaNome)}</td>
-                <td style="padding:1rem; color:#9ca3af; font-size:0.75rem;">ID: ${escaparHtml(tutore.id)}</td>
                 <td style="padding:1rem; text-align:center;">
                     <a href="/tutore/editar?tutore=${encodeURIComponent(tutore.id)}" style="display:inline-flex; align-items:center; gap:0.25rem; padding:0.35rem 0.75rem; border-radius:0.5rem; background:#fffbeb; color:#92400e; font-size:0.75rem; font-weight:600; text-decoration:none; border:1px solid #fde68a; transition:all 0.15s;" onmouseover="this.style.background='#fef3c7'" onmouseout="this.style.background='#fffbeb'">
                         <i class="fas fa-edit" style="font-size:0.7rem;"></i> Editar

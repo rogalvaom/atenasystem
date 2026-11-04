@@ -29,7 +29,7 @@ $(document).ready(function() {
         });
         $(document).on('click', '.btn-excluir-sala', function() {
             var row = $(this).closest('tr');
-            excluirSala($(this).data('id'), row.children('td').first().text());
+            excluirSala($(this).data('id'), row.data('name'));
         });
     }
 
@@ -75,9 +75,10 @@ function carregarTabelaSalas() {
         var html = '';
         salas.forEach(function(sala) {
             var searchText = escaparHtml([sala.nome, sala.id].join(' '));
-            html += `<tr data-search="${searchText}" style="border-bottom:1px solid #f3f4f6; transition:background 0.15s;">
-                <td style="padding:1rem; font-weight:500; color:#111827;">${escaparHtml(sala.nome)}</td>
-                <td style="padding:1rem; color:#9ca3af; font-size:0.75rem;">ID: ${escaparHtml(sala.id)}</td>
+            var nome = escaparHtml(sala.nome);
+            html += `<tr data-name="${nome}" data-search="${searchText}" style="border-bottom:1px solid #f3f4f6; transition:background 0.15s;">
+                <td style="padding:1rem; color:#9ca3af; font-size:0.75rem;">${escaparHtml(sala.id)}</td>
+                <td style="padding:1rem; font-weight:500; color:#111827;">${nome}</td>
                 <td style="padding:1rem; text-align:center;">
                     <a href="/sala/editar?sala=${encodeURIComponent(sala.id)}" style="display:inline-flex; align-items:center; gap:0.25rem; padding:0.35rem 0.75rem; border-radius:0.5rem; background:#fffbeb; color:#92400e; font-size:0.75rem; font-weight:600; text-decoration:none; border:1px solid #fde68a; transition:all 0.15s;" onmouseover="this.style.background='#fef3c7'" onmouseout="this.style.background='#fffbeb'">
                         <i class="fas fa-edit" style="font-size:0.7rem;"></i> Editar
