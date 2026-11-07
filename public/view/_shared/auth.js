@@ -3,39 +3,29 @@ import { applyFeatureVisibility, canAccessFeature, fetchSession } from './permis
 const publicPaths = new Set(['/', '/login']);
 const currentPath = window.location.pathname.replace(/\/+$/, '') || '/';
 
-if (!publicPaths.has(currentPath)) {
+export const authReady = (async function() {
+    if (publicPaths.has(currentPath)) return { public: true };
+
     document.body.style.visibility = 'hidden';
-    let intervalId;
-
-    async function checkSession() {
-        const session = await fetchSession();
-        if (!session) return;
-
-        if (!session.logged) {
-            window.clearInterval(intervalId);
-            window.location.replace('/login');
-            return false;
-        }
-
-        if (!canAccessFeature(currentPath, session.modo)) {
-            window.clearInterval(intervalId);
-            window.location.replace('/home');
-            return false;
-        }
-
-        applyFeatureVisibility(document, session.modo);
-        document.body.style.visibility = 'visible';
-        return true;
+    const session = await fetchSession();
+    if (!session) {
+        window.addEventListener('online', () => window.location.reload(), { once: true });
+        return new Promise(() => {});
     }
 
-    checkSession();
-    intervalId = window.setInterval(checkSession, 1000);
-    window.addEventListener('pageshow', checkSession);
+    if (!session.logged) {
+        window.location.replace('/login');
+        return new Promise(() => {});
+    }
 
-    const observer = new MutationObserver(() => {
-        fetchSession().then(session => {
-            if (session?.logged) applyFeatureVisibility(document, session.modo);
-        });
-    });
-    observer.observe(document.documentElement, { childList: true, subtree: true });
-}
+    if (!canAccessFeature(currentPath, session.modo)) {
+        window.location.replace('/home');
+        return new Promise(() => {});
+    }
+
+    applyFeatureVisibility(document, session.modo);
+    document.body.style.visibility = 'visible';
+    return session;
+})();
+
+window.atnAuthReady = authReady;

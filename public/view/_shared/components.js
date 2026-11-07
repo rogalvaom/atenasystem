@@ -241,7 +241,11 @@ window.atnComponents = {
 };
 
 // Event listener para inicializar componentes após content load
-document.addEventListener('DOMContentLoaded', initComponents);
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initComponents, { once: true });
+} else {
+    initComponents();
+}
 
 // Evento disparado quando conteúdo é carregado
 document.addEventListener('atn:content-loaded', () => {

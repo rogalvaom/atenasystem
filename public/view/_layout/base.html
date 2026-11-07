@@ -93,7 +93,6 @@
 
     <!-- Shared Modules (ES6) -->
     <script type="module" src="/public/view/_shared/menu.js"></script>
-    <script type="module" src="/public/view/_shared/components.js"></script>
 
     <!-- Page-specific JS (injected via data-page-js) -->
     <script id="page-script" type="module"></script>
@@ -159,8 +158,11 @@
             
             // Inicializa
             document.addEventListener('DOMContentLoaded', () => {
-                loadPageContent();
-                loadPageScript();
+                window.atnAuthReady?.then(authorized => {
+                    if (!authorized) return;
+                    loadPageContent();
+                    loadPageScript();
+                });
             });
         })();
     </script>

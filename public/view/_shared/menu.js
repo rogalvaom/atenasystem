@@ -1,6 +1,12 @@
-import { renderNavbar } from './navbar.js';
-import { MENU_ITEMS, fetchSession } from './permissions.js';
-import './auth.js';
+import { authReady } from './auth.js';
+
+const session = await authReady;
+
+const [{ renderNavbar }, { MENU_ITEMS }] = await Promise.all([
+    import('./navbar.js'),
+    import('./permissions.js'),
+    import('./components.js')
+]);
 
 function renderMenu(mode) {
     const nav = document.getElementById('atn-sidebar-nav');
@@ -148,15 +154,47 @@ function initializeResponsiveMenu() {
     });
 }
 
-document.addEventListener('DOMContentLoaded', function() {
-    renderNavbar();
-    fetchSession().then(session => {
-        if (!session || !session.logged) return;
-        renderMenu(session.modo);
-        renderActiveMenuItem();
-        renderPageEyebrow();
-        initializeResponsiveMenu();
-    });
-});
+function getPageScriptPath(path) {
+    const sections = ['alune', 'comissao', 'disciplina', 'monitore', 'representante', 'sala', 'tutore'];
+    const section = path.split('/')[1];
+
+    if (section === 'home') return '/public/view/home/index.js';
+    if (sections.includes(section)) return `/public/view/${section}/index.js`;
+    if (section === 'presenca' || section === 'relatorio') {
+        const page = path.split('/')[2] || (section === 'presenca' ? 'alune' : 'alune');
+        return `/public/view/${section}/${page}.js`;
+    }
+
+    return null;
+}
+
+async function loadPageScript() {
+    if (document.getElementById('page-script')) return;
+
+    const path = window.location.pathname.replace(/\/+$/, '') || '/';
+    const scriptPath = getPageScriptPath(path);
+    if (scriptPath) await import(scriptPath);
+
+    if (path.startsWith('/certificado')) {
+        for (const src of ['/public/js/html2canvas.js', '/public/js/certificado.js']) {
+            await new Promise((resolve, reject) => {
+                const script = document.createElement('script');
+                script.src = src;
+                script.onload = resolve;
+                script.onerror = reject;
+                document.body.append(script);
+            });
+        }
+    }
+
+    document.dispatchEvent(new CustomEvent('atn:auth-ready', { detail: session }));
+}
+
+renderNavbar();
+renderMenu(session.modo);
+renderActiveMenuItem();
+renderPageEyebrow();
+initializeResponsiveMenu();
+await loadPageScript();
 
 document.addEventListener('atn:content-loaded', renderPageEyebrow);

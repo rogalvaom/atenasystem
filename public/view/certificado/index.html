@@ -139,9 +139,8 @@
 		</main>
 	</div>
 
-	<script src="/public/js/html2canvas.js"></script>
-	<script src="/public/js/certificado.js"></script>
 	<script>
+		document.addEventListener('atn:auth-ready', function() {
 		$(document).ready(function() {
 			buscarMonitores();
 			buscarRepresentantes();
@@ -157,8 +156,8 @@
 				$('#dataFinal').attr('min', this.value);
 			});
 		});
+		}, { once: true });
 	</script>
 	<script type="module" src="/public/view/_shared/menu.js"></script>
-	<script type="module" src="/public/view/_shared/components.js"></script>
 </body>
 </html>

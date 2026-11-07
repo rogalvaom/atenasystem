@@ -1,6 +1,10 @@
 /* Design System Atena - CSS Customizado
    Baseado em tokens CSS e componentes reutilizáveis */
 
+body:has(#atn-sidebar-nav) {
+    visibility: hidden;
+}
+
 /* === Tokens CSS === */
 :root {
     /* Cores primárias */
