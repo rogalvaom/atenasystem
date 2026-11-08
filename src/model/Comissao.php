@@ -17,13 +17,13 @@
         }
 
         function getComissoes(){
-            $getComissoes =  $this->connection->prepare('SELECT id,nome,usuario FROM comissao ORDER BY nome ASC');
+            $getComissoes =  $this->connection->prepare('SELECT id,nome,usuario,senha FROM comissao ORDER BY nome ASC');
             $getComissoes->execute();
             return $getComissoes->fetchAll(PDO::FETCH_ASSOC);
         }
 
         function getComissao($id){
-            $getComissao =  $this->connection->prepare('SELECT id,nome,usuario FROM comissao WHERE id = :id ORDER BY nome ASC');
+            $getComissao =  $this->connection->prepare('SELECT id,nome,usuario,senha FROM comissao WHERE id = :id ORDER BY nome ASC');
             $getComissao->execute([
                 ':id' => $id,
             ]);

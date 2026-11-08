@@ -17,13 +17,13 @@
         }
 
         function getMonitores(){
-            $getMonitores =  $this->connection->prepare('SELECT id,nome,usuario FROM monitore ORDER BY nome ASC');
+            $getMonitores =  $this->connection->prepare('SELECT id,nome, usuario, senha FROM monitore ORDER BY nome ASC');
             $getMonitores->execute();
             return $getMonitores->fetchAll(PDO::FETCH_ASSOC);
         }
 
         function getMonitore($id){
-            $getMonitore =  $this->connection->prepare('SELECT id,nome,usuario FROM monitore WHERE id = :id ORDER BY nome ASC');
+            $getMonitore =  $this->connection->prepare('SELECT id,nome,usuario,senha FROM monitore WHERE id = :id ORDER BY nome ASC');
             $getMonitore->execute([
                 ':id' => $id,
             ]);

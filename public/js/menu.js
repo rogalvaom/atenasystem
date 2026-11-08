@@ -1,214 +1,233 @@
-function loadMenu(activeRoute) {
-    var session = apiGet('/session');
-    if (!session || !session.logged) {
-        window.location.assign('/login');
-        return;
+import { authReady } from './auth.js';
+
+const session = await authReady;
+
+const [{ renderNavbar }] = await Promise.all([
+    import('./navbar.js'),
+    import('./components.js')
+]);
+
+const MENU_ITEMS = [
+    { path: '/representante', moduleId: 'representante', label: 'Representante', icon: 'fa-user-plus' },
+    { path: '/comissao', moduleId: 'comissao', label: 'Comissão de Faltas', icon: 'fa-address-book' },
+    { path: '/monitore', moduleId: 'monitore', label: 'Monitore', icon: 'fa-user-circle' },
+    { path: '/tutore', modePath: '/tutore/justificar', moduleId: 'tutore', label: 'Tutore', icon: 'fa-user' },
+    { path: '/alune', moduleId: 'alune', label: 'Alune', icon: 'fa-graduation-cap' },
+    { path: '/disciplina', moduleId: 'disciplina', label: 'Disciplina', icon: 'fa-book-open' },
+    { path: '/sala', moduleId: 'sala', label: 'Sala', icon: 'fa-university' },
+    { path: '/presenca', modePath: '/presenca/reuniao', moduleId: 'presenca-alune', label: 'Presença', icon: 'fa-calendar' },
+    { path: '/certificado', moduleId: 'certificado-monitore', label: 'Certificado', icon: 'fa-file-pdf' },
+    { path: '/relatorio', modePath: '/relatorio/reuniao', moduleId: 'relatorio-alune', label: 'Relatório', icon: 'fa-chart-column' }
+];
+
+function getStoredModulos() {
+    try {
+        const stored = localStorage.getItem('atn_modulos');
+        return stored ? JSON.parse(stored) : null;
+    } catch {
+        return null;
     }
+}
 
-    var modo = session.modo;
-    var path = activeRoute || window.location.pathname.replace(/^\//, '').split('?')[0];
+function renderMenu(mode) {
+    const nav = document.getElementById('atn-sidebar-nav');
+    if (!nav) return;
 
-    var navbarHtml = `
-    <nav class="navbar navbar-custom navbar-fixed-top" role="navigation">
-        <div class="container-fluid">
-            <div class="navbar-header">
-                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#sidebar-collapse">
-                    <span class="sr-only">Toggle navigation</span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                </button>
-                <a class="navbar-brand" href="/home"><span style="color:orange">Atena</span>System</a>
-            </div>
-        </div>
-    </nav>
-    `;
+    const modulos = (session && session.modulos) || getStoredModulos() || [];
+    
+    const visibleItems = MENU_ITEMS.filter(item => {
+        if (item.moduleId === 'presenca-alune') {
+            return modulos.includes('presenca-alune') || modulos.includes('presenca-tutore') || modulos.includes('presenca-monitore') || modulos.includes('presenca-reuniao');
+        }
+        if (item.moduleId === 'relatorio-alune') {
+            return modulos.includes('relatorio-alune') || modulos.includes('relatorio-tutore') || modulos.includes('relatorio-monitore') || modulos.includes('relatorio-reuniao');
+        }
+        return modulos.includes(item.moduleId);
+    });
 
-    var isRep = modo === 'representate';
-    var isMon = modo === 'monitore';
-    var isCom = modo === 'comissao';
-
-    var sidebarHtml = `
-    <div id="sidebar-collapse" class="col-sm-3 col-lg-2 sidebar">
-        <ul class="nav menu">
-            <h1 id="espaco-menu"></h1>
-            ${isRep ? `
-            <li class="parent"><a data-toggle="collapse" href="#sub-item-1">
-                <em class="fa fa-user-plus" aria-hidden="true"></em> Representante <span data-toggle="collapse" href="#sub-item-1" class="icon pull-right"><em class="fa fa-plus"></em></span>   
-            </a>
-                <ul class="children collapse ${path === 'representante' || path === 'representante/editar' ? 'in' : ''}" id="sub-item-1">
-                    <li><a style="${path === 'representante' ? 'background-color:orange;' : ''}" href="/representante">
-                        <span class="fa fa-arrow-right">&nbsp;</span> Cadastro
-                    </a></li>
-                    <li><a style="${path === 'representante/editar' ? 'background-color:orange;' : ''}" href="/representante/editar">
-                        <span class="fa fa-arrow-right">&nbsp;</span> Editar
-                    </a></li>
-                </ul>
-            </li>
-            <li class="parent"><a data-toggle="collapse" href="#sub-item-2">
-                <em class="fa fa-address-book" aria-hidden="true"></em> Comissão de Faltas  <span data-toggle="collapse" href="#sub-item-2" class="icon pull-right"><em class="fa fa-plus"></em></span>
-                </a>
-                <ul class="children collapse ${path === 'comissao' || path === 'comissao/editar' ? 'in' : ''}" id="sub-item-2">
-                    <li><a style="${path === 'comissao' ? 'background-color:orange;' : ''}" href="/comissao">
-                        <span class="fa fa-arrow-right">&nbsp;</span> Cadastro
-                    </a></li>
-                    <li><a style="${path === 'comissao/editar' ? 'background-color:orange;' : ''}" href="/comissao/editar">
-                        <span class="fa fa-arrow-right">&nbsp;</span> Editar
-                    </a></li>
-                </ul>
-            </li>
-            <li class="parent"><a data-toggle="collapse" href="#sub-item-3">
-                <em class="fa fa-user-circle-o" aria-hidden="true"></em> Monitore <span data-toggle="collapse" href="#sub-item-3" class="icon pull-right"><em class="fa fa-plus"></em></span>
-                </a>
-                <ul class="children collapse ${path === 'monitore' || path === 'monitore/editar' || path === 'monitore/presenca' ? 'in' : ''}" id="sub-item-3">
-                    <li><a style="${path === 'monitore' ? 'background-color:orange;' : ''}" href="/monitore">
-                        <span class="fa fa-arrow-right">&nbsp;</span> Cadastro
-                    </a></li>
-                    <li><a style="${path === 'monitore/editar' ? 'background-color:orange;' : ''}" href="/monitore/editar">
-                        <span class="fa fa-arrow-right">&nbsp;</span> Editar
-                    </a></li>
-                    <li><a style="${path === 'monitore/presenca' ? 'background-color:orange;' : ''}" href="/monitore/presenca">
-                        <span class="fa fa-arrow-right">&nbsp;</span> Editar Presença
-                    </a></li>
-                </ul>
-            </li>` : ''}
-
-            <li class="parent"><a data-toggle="collapse" href="#sub-item-4">
-                <em class="fa fa-user-o" aria-hidden="true">&nbsp;</em> Tutore <span data-toggle="collapse" href="#sub-item-4" class="icon pull-right"><em class="fa fa-plus"></em></span>
-                </a>
-                <ul class="children collapse ${path === 'tutore' || path === 'tutore/editar' || path === 'tutore/justificar' || path === 'tutore/presenca' ? 'in' : ''}" id="sub-item-4">
-                    ${(isRep || isMon) ? `
-                    <li><a style="${path === 'tutore' ? 'background-color:orange;' : ''}" href="/tutore">
-                        <span class="fa fa-arrow-right">&nbsp;</span> Cadastro
-                    </a></li>
-                    <li><a style="${path === 'tutore/editar' ? 'background-color:orange;' : ''}" href="/tutore/editar">
-                        <span class="fa fa-arrow-right">&nbsp;</span> Editar
-                    </a></li>` : ''}
-                    ${(isRep || isCom) ? `
-                    <li><a style="${path === 'tutore/justificar' ? 'background-color:orange;' : ''}" href="/tutore/justificar">
-                        <span class="fa fa-arrow-right">&nbsp;</span> Justificar Presença
-                    </a></li>` : ''}
-                    ${(isRep || isMon) ? `
-                    <li><a style="${path === 'tutore/presenca' ? 'background-color:orange;' : ''}" href="/tutore/presenca">
-                        <span class="fa fa-arrow-right">&nbsp;</span> Editar Presença
-                    </a></li>` : ''}
-                </ul>
-            </li>
-
-            ${(isRep || isMon) ? `
-            <li class="parent"><a data-toggle="collapse" href="#sub-item-5">
-                <em class="fa fa-graduation-cap" aria-hidden="true">&nbsp;</em> Alune <span data-toggle="collapse" href="#sub-item-5" class="icon pull-right"><em class="fa fa-plus"></em></span>
-                </a>
-                <ul class="children collapse ${path === 'alune' || path === 'alune/editar' || path === 'alune/justificar' ? 'in' : ''}" id="sub-item-5">
-                    <li><a style="${path === 'alune' ? 'background-color:orange;' : ''}" href="/alune">
-                        <span class="fa fa-arrow-right">&nbsp;</span> Cadastro
-                    </a></li>
-                    <li><a style="${path === 'alune/editar' ? 'background-color:orange;' : ''}" href="/alune/editar">
-                        <span class="fa fa-arrow-right">&nbsp;</span> Editar
-                    </a></li>
-                    <li><a style="${path === 'alune/justificar' ? 'background-color:orange;' : ''}" href="/alune/justificar">
-                        <span class="fa fa-arrow-right">&nbsp;</span> Justificar Presença
-                    </a></li>
-                </ul>
-            </li>
-            <li class="parent"><a data-toggle="collapse" href="#sub-item-6">
-                <em class="fa fa-newspaper-o" aria-hidden="true">&nbsp;</em> Disciplina <span data-toggle="collapse" href="#sub-item-6" class="icon pull-right"><em class="fa fa-plus"></em></span>
-                </a>
-                <ul class="children collapse ${path === 'disciplina' || path === 'disciplina/editar' ? 'in' : ''}" id="sub-item-6">
-                    <li><a style="${path === 'disciplina' ? 'background-color:orange;' : ''}" href="/disciplina">
-                        <span class="fa fa-arrow-right">&nbsp;</span> Cadastro
-                    </a></li>
-                    <li><a style="${path === 'disciplina/editar' ? 'background-color:orange;' : ''}" href="/disciplina/editar">
-                        <span class="fa fa-arrow-right">&nbsp;</span> Editar
-                    </a></li>
-                </ul>
-            </li>
-            <li class="parent"><a data-toggle="collapse" href="#sub-item-7">
-                <em class="fa fa-university" aria-hidden="true">&nbsp;</em> Sala <span data-toggle="collapse" href="#sub-item-7" class="icon pull-right"><em class="fa fa-plus"></em></span>
-                </a>
-                <ul class="children collapse ${path === 'sala' || path === 'sala/editar' ? 'in' : ''}" id="sub-item-7">
-                    <li><a style="${path === 'sala' ? 'background-color:orange;' : ''}" href="/sala">
-                        <span class="fa fa-arrow-right">&nbsp;</span> Cadastro
-                    </a></li>
-                    <li><a style="${path === 'sala/editar' ? 'background-color:orange;' : ''}" href="/sala/editar">
-                        <span class="fa fa-arrow-right">&nbsp;</span> Editar
-                    </a></li>
-                </ul>
-            </li>` : ''}
-
-            <li class="parent"><a data-toggle="collapse" href="#sub-item-8">
-                <em class="fa fa-calendar">&nbsp;</em> Presença <span data-toggle="collapse" href="#sub-item-8" class="icon pull-right"><em class="fa fa-plus"></em></span>
-                </a>
-                <ul class="children collapse ${path.startsWith('presenca') ? 'in' : ''}" id="sub-item-8">
-                    ${(isRep || isMon) ? `
-                    <li><a style="${path === 'presenca' || path === 'presenca/alune' ? 'background-color:orange;' : ''}" href="/presenca/alune">
-                        <span class="fa fa-arrow-right">&nbsp;</span> Aula Alune
-                    </a></li>
-                    <li><a style="${path === 'presenca/tutore' ? 'background-color:orange;' : ''}" href="/presenca/tutore">
-                        <span class="fa fa-arrow-right">&nbsp;</span> Aula Tutore
-                    </a></li>` : ''}
-                    ${isRep ? `
-                    <li><a style="${path === 'presenca/monitore' ? 'background-color:orange;' : ''}" href="/presenca/monitore">
-                        <span class="fa fa-arrow-right">&nbsp;</span> Monitoria
-                    </a></li>` : ''}
-                    ${(isRep || isCom) ? `
-                    <li><a style="${path === 'presenca/reuniao' ? 'background-color:orange;' : ''}" href="/presenca/reuniao">
-                        <span class="fa fa-arrow-right">&nbsp;</span> Reunião
-                    </a></li>` : ''}
-                </ul>
-            </li>
-
-            ${(isRep || isMon) ? `
-            <li class="parent"><a data-toggle="collapse" href="#sub-item-9">
-                <em class="fa fa-file-pdf-o">&nbsp;</em> Certificado <span data-toggle="collapse" href="#sub-item-9" class="icon pull-right"><em class="fa fa-plus"></em></span>
-                </a>
-                <ul class="children collapse ${path.startsWith('certificado') ? 'in' : ''}" id="sub-item-9">
-                    <li><a style="${path === 'certificado/tutore' ? 'background-color:orange;' : ''}" href="/certificado/tutore">
-                        <span class="fa fa-arrow-right">&nbsp;</span> Tutore
-                    </a></li>
-                    <li><a style="${path === 'certificado' ? 'background-color:orange;' : ''}" href="/certificado">
-                        <span class="fa fa-arrow-right">&nbsp;</span> Monitore
-                    </a></li>
-                </ul>
-            </li>` : ''}
-
-            <li class="parent"><a data-toggle="collapse" href="#sub-item-10">
-                <em class="fa fa-bar-chart">&nbsp;</em> Relatorio <span data-toggle="collapse" href="#sub-item-10" class="icon pull-right"><em class="fa fa-plus"></em></span>
-                </a>
-                <ul class="children collapse ${path.startsWith('relatorio') ? 'in' : ''}" id="sub-item-10">
-                    ${(isRep || isMon) ? `
-                    <li><a style="${path === 'relatorio' ? 'background-color:orange;' : ''}" href="/relatorio">
-                        <span class="fa fa-arrow-right">&nbsp;</span> Presença Alune
-                    </a></li>` : ''}
-                    ${(isRep || isCom) ? `
-                    <li><a style="${path === 'relatorio/reuniao' ? 'background-color:orange;' : ''}" href="/relatorio/reuniao">
-                        <span class="fa fa-arrow-right">&nbsp;</span> Precença Reunião
-                    </a></li>` : ''}
-                    ${isRep ? `
-                    <li><a style="${path === 'relatorio/monitore' ? 'background-color:orange;' : ''}" href="/relatorio/monitore">
-                        <span class="fa fa-arrow-right">&nbsp;</span> Presença Monitore
-                    </a></li>` : ''}
-                    ${(isRep || isMon) ? `
-                    <li><a style="${path === 'relatorio/tutore' ? 'background-color:orange;' : ''}" href="/relatorio/tutore">
-                        <span class="fa fa-arrow-right">&nbsp;</span> Presença Tutore
-                    </a></li>` : ''}
-                </ul>
-            </li>
-
-            <li><a onclick="logout()"><em class="fa fa-power-off">&nbsp;</em> Logout</a></li>
+    nav.innerHTML = `
+        <ul style="list-style:none; padding:0; margin:0; font-family:'Inter',sans-serif;">
+            <li class="atn-menu-item"><a href="/home"><i class="fas fa-house"></i> Início</a></li>
+            ${visibleItems.map(item => `
+                <li class="atn-menu-item"><a href="${mode === 'comissao' && item.modePath ? item.modePath : item.path}"><i class="fas ${item.icon}"></i> ${item.label}</a></li>
+            `).join('')}
+            <li class="atn-menu-item logout"><a id="atn-logout-link" href="/login"><i class="fas fa-power-off"></i> Logout</a></li>
         </ul>
-    </div>
     `;
 
-    if ($('#menu-container').length) {
-        $('#menu-container').html(navbarHtml + sidebarHtml);
-    } else {
-        $('body').prepend(navbarHtml + sidebarHtml);
+    const logoutLink = nav.querySelector('#atn-logout-link');
+    logoutLink?.addEventListener('click', async function(event) {
+        event.preventDefault();
+        logoutLink.setAttribute('aria-busy', 'true');
+
+        try {
+            const response = await fetch('/api/logout', {
+                method: 'POST',
+                credentials: 'same-origin'
+            });
+            if (!response.ok) throw new Error('Falha ao encerrar a sessão.');
+            window.location.replace('/login');
+        } catch {
+            logoutLink.removeAttribute('aria-busy');
+            alert('Não foi possível encerrar a sessão. Tente novamente.');
+        }
+    });
+}
+
+function renderActiveMenuItem() {
+    const nav = document.getElementById('atn-sidebar-nav');
+    if (!nav) return;
+
+    const currentPath = window.location.pathname.replace(/\/+$/, '') || '/';
+    const candidates = Array.from(nav.querySelectorAll('a[href^="/"]'))
+        .map(link => ({
+            link: link,
+            path: new URL(link.href, window.location.origin).pathname.replace(/\/+$/, '') || '/'
+        }))
+        .filter(item => currentPath === item.path || currentPath.startsWith(`${item.path}/`))
+        .sort((first, second) => second.path.length - first.path.length);
+
+    const activeItem = candidates[0];
+    if (!activeItem) return;
+
+    activeItem.link.classList.add('active');
+    activeItem.link.setAttribute('aria-current', currentPath === activeItem.path ? 'page' : 'location');
+}
+
+const pageSections = [
+    { path: '/home', label: 'Visão geral', icon: 'fa-house' },
+    { path: '/alune', label: 'Gestão de alunes', icon: 'fa-graduation-cap' },
+    { path: '/comissao', label: 'Controle de faltas', icon: 'fa-address-book' },
+    { path: '/disciplina', label: 'Gestão acadêmica', icon: 'fa-book-open' },
+    { path: '/monitore', label: 'Gestão de monitores', icon: 'fa-user-circle' },
+    { path: '/representante', label: 'Equipe de coordenação', icon: 'fa-user-plus' },
+    { path: '/sala', label: 'Gestão de salas', icon: 'fa-university' },
+    { path: '/tutore', label: 'Gestão de tutores', icon: 'fa-user' },
+    { path: '/presenca', label: 'Controle de presença', icon: 'fa-clipboard-check' },
+    { path: '/certificado', label: 'Emissão de certificados', icon: 'fa-award' },
+    { path: '/relatorio', label: 'Indicadores de frequência', icon: 'fa-chart-column' }
+];
+
+function renderPageEyebrow() {
+    const main = document.querySelector('.atn-main');
+    if (!main || main.querySelector('.atn-page-eyebrow, .report-eyebrow, .attendance-eyebrow, .certificate-eyebrow')) return;
+
+    const path = window.location.pathname.replace(/\/+$/, '') || '/';
+    const section = pageSections.find(item => path === item.path || path.startsWith(`${item.path}/`));
+    const heading = main.querySelector('h2, h1');
+    if (!section || !heading || !heading.parentElement) return;
+
+    const eyebrow = document.createElement('p');
+    eyebrow.className = 'atn-page-eyebrow';
+    const icon = document.createElement('i');
+    icon.className = `fas ${section.icon}`;
+    icon.setAttribute('aria-hidden', 'true');
+    eyebrow.append(icon, document.createTextNode(section.label));
+    heading.parentElement.insertBefore(eyebrow, heading);
+}
+
+function initializeResponsiveMenu() {
+    const sidebar = document.querySelector('.atn-sidebar');
+    const toggle = document.getElementById('sidebar-toggle');
+    if (!sidebar || !toggle) return;
+
+    sidebar.id = 'atn-sidebar';
+    sidebar.querySelector('.atn-sidebar-header')?.remove();
+    sidebar.querySelector('.atn-sidebar-close')?.remove();
+
+    let overlay = document.querySelector('.atn-sidebar-overlay');
+    if (!overlay) {
+        overlay = document.createElement('div');
+        overlay.className = 'atn-sidebar-overlay';
+        overlay.id = 'sidebar-overlay';
+        overlay.setAttribute('aria-hidden', 'true');
+        document.body.append(overlay);
     }
+
+    toggle.setAttribute('aria-controls', sidebar.id);
+
+    function closeMenu(restoreFocus = false) {
+        const wasOpen = sidebar.classList.contains('show');
+        sidebar.classList.remove('show');
+        overlay.classList.remove('show');
+        overlay.setAttribute('aria-hidden', 'true');
+        document.body.classList.remove('atn-sidebar-open');
+        toggle.setAttribute('aria-expanded', 'false');
+        toggle.setAttribute('aria-label', 'Abrir menu');
+        if (restoreFocus && wasOpen) toggle.focus();
+    }
+
+    function openMenu() {
+        sidebar.classList.add('show');
+        overlay.classList.add('show');
+        overlay.setAttribute('aria-hidden', 'false');
+        document.body.classList.add('atn-sidebar-open');
+        toggle.setAttribute('aria-expanded', 'true');
+        toggle.setAttribute('aria-label', 'Fechar menu');
+        sidebar.querySelector('a')?.focus();
+    }
+
+    toggle.addEventListener('click', function() {
+        if (sidebar.classList.contains('show')) {
+            closeMenu();
+        } else {
+            openMenu();
+        }
+    });
+    overlay.addEventListener('click', function() {
+        closeMenu(true);
+    });
+    sidebar.addEventListener('click', function(event) {
+        if (event.target.closest('a') && window.matchMedia('(max-width: 767.98px)').matches) {
+            closeMenu();
+        }
+    });
+    document.addEventListener('keydown', function(event) {
+        if (event.key === 'Escape') closeMenu(true);
+    });
 }
 
-function logout(){
-    var resp = apiPost('/logout');
-    window.location.assign('/login');
+function getPageScriptPath(path) {
+    const sections = ['alune', 'comissao', 'disciplina', 'monitore', 'representante', 'sala', 'tutore'];
+    const section = path.split('/')[1];
+
+    if (section === 'home') return '/public/view/home/index.js';
+    if (sections.includes(section)) return `/public/view/${section}/index.js`;
+    if (section === 'presenca' || section === 'relatorio') {
+        const page = path.split('/')[2] || (section === 'presenca' ? 'alune' : 'alune');
+        return `/public/view/${section}/${page}.js`;
+    }
+
+    return null;
 }
 
+async function loadPageScript() {
+    if (document.getElementById('page-script')) return;
+
+    const path = window.location.pathname.replace(/\/+$/, '') || '/';
+    const scriptPath = getPageScriptPath(path);
+    if (scriptPath) await import(scriptPath);
+
+    if (path.startsWith('/certificado')) {
+        for (const src of ['/public/js/html2canvas.js', '/public/js/certificado.js']) {
+            await new Promise((resolve, reject) => {
+                const script = document.createElement('script');
+                script.src = src;
+                script.onload = resolve;
+                script.onerror = reject;
+                document.body.append(script);
+            });
+        }
+    }
+
+    document.dispatchEvent(new CustomEvent('atn:auth-ready', { detail: session }));
+}
+
+renderNavbar();
+renderMenu(session.modo);
+renderActiveMenuItem();
+renderPageEyebrow();
+initializeResponsiveMenu();
+await loadPageScript();
+
+document.addEventListener('atn:content-loaded', renderPageEyebrow);
