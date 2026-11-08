@@ -209,7 +209,7 @@ async function loadPageScript() {
     if (scriptPath) await import(scriptPath);
 
     if (path.startsWith('/certificado')) {
-        for (const src of ['/public/js/html2canvas.js', '/public/js/certificado.js']) {
+        for (const src of ['/core/js/html2canvas.js', '/public/js/certificado.js']) {
             await new Promise((resolve, reject) => {
                 const script = document.createElement('script');
                 script.src = src;
