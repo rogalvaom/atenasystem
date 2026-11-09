@@ -17,16 +17,9 @@ export const authReady = (async function() {
     
     let session = null;
     try {
-        const response = await fetch('/api/session', {
-            credentials: 'same-origin',
-            cache: 'no-store',
-            headers: { Accept: 'application/json' }
-        });
-        if (response.ok) {
-            session = await response.json();
-            if (session && session.modulos) {
-                localStorage.setItem('atn_modulos', JSON.stringify(session.modulos));
-            }
+        session = apiGet('/session');
+        if (session && session.modulos) {
+            localStorage.setItem('atn_modulos', JSON.stringify(session.modulos));
         }
     } catch {}
 

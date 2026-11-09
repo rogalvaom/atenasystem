@@ -1,0 +1,20 @@
+{
+    "name": "rgalvaomachado/capiphp",
+    "autoload": {
+        "psr-4": {
+            "Rgalvaomachado\\CapiPHP\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "rgalvaomachado",
+            "email": "rgalvaomachado@gmail.com"
+        }
+    ],
+    "require": {
+        "dompdf/dompdf": "^2.0"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^11.5"
+    }
+}

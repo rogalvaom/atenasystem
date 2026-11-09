@@ -51,9 +51,12 @@ function apiGet(url, data = null){
     var responseData = null;
     $.ajax({
         method: "GET",
-        url: '/api' + url,
+        url: (typeof apiUrl !== 'undefined' ? apiUrl : '') + 'api' + url,
         headers: {
             "Content-Type": "application/json",
+        },
+        xhrFields: {
+            withCredentials: true
         },
         data: data,
         async: false,
@@ -87,9 +90,12 @@ function apiPost(url, data = null){
     }
     $.ajax({
         method: "POST",
-        url: '/api' + url,
+        url: (typeof apiUrl !== 'undefined' ? apiUrl : '') + 'api' + url,
         data: requestData,
         headers: requestHeaders,
+        xhrFields: {
+            withCredentials: true
+        },
         processData: processData,
         contentType: contentType,
         async: false,
@@ -119,9 +125,12 @@ function apiPut(url, data = null){
     }
     $.ajax({
         method: "PUT",
-        url: '/api' + url,
+        url: (typeof apiUrl !== 'undefined' ? apiUrl : '') + 'api' + url,
         data: requestData,
         headers: requestHeaders,
+        xhrFields: {
+            withCredentials: true
+        },
         processData: processData,
         contentType: contentType,
         async: false,
@@ -151,9 +160,12 @@ function apiDelete(url, data = null){
     }
     $.ajax({
         method: "DELETE",
-        url: '/api' + url,
+        url: (typeof apiUrl !== 'undefined' ? apiUrl : '') + 'api' + url,
         data: requestData,
         headers: requestHeaders,
+        xhrFields: {
+            withCredentials: true
+        },
         processData: processData,
         contentType: contentType,
         async: false,

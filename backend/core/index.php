@@ -2,7 +2,6 @@
     require('autoload.php');
     require(__DIR__ . '/../vendor/autoload.php');
     include_once(__DIR__ . '/../env.php');
-    include_once(__DIR__ . '/../routes/web.php');
     include_once(__DIR__ . '/../routes/api.php');
 
     if (!session_start()) {
@@ -20,14 +19,11 @@
     date_default_timezone_set($_ENV['TIMEZONE']);
 
     $Router = new Router();
-    if ($Router->checkApi() ){
-        header("Content-Type: application/json; charset=UTF-8");
-        header("Access-Control-Allow-Origin: *");
-        header("Access-Control-Allow-Methods: GET,POST,PUT,DELETE");
-        header("Access-Control-Max-Age: 3600");
-        header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With");
-        $Router->runApi($api);
-    } else {
-        $Router->runWeb($web);
-    }
+    header("Content-Type: application/json; charset=UTF-8");
+    header("Access-Control-Allow-Origin: http://localhost");
+    header("Access-Control-Allow-Credentials: true");
+    header("Access-Control-Allow-Methods: GET,POST,PUT,DELETE,OPTIONS");
+    header("Access-Control-Max-Age: 3600");
+    header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With");
+    $Router->runApi($api);
 ?>

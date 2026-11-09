@@ -1,16 +1,37 @@
 version: '3.8'
 
 services:
-  web:
+  backend:
     build:
-      context: ./docker
-    image: atenasystem:8.2-apache
-    container_name: atenasystem
+      context: ./backend/docker
+    image: atenasystem-backend:8.2-apache
+    container_name: atenasystem_backend
+    ports:
+      - "8080:80"
+    volumes:
+      - ./backend:/var/www/html
+      - ./backend/docker/apache-config:/etc/apache2/sites-enabled
+    environment:
+      APACHE_DOCUMENT_ROOT: /var/www/html
+    working_dir: /var/www/html
+    command: >
+      bash -c "
+      a2enmod rewrite && \
+      apache2-foreground"
+    restart: always
+    networks:
+      - internal-network
+
+  frontend:
+    build:
+      context: ./frontend/docker
+    image: atenasystem-frontend:8.2-apache
+    container_name: atenasystem_frontend
     ports:
       - "80:80"
     volumes:
-      - .:/var/www/html
-      - ./docker/apache-config:/etc/apache2/sites-enabled
+      - ./frontend:/var/www/html
+      - ./frontend/docker/apache-config:/etc/apache2/sites-enabled
     environment:
       APACHE_DOCUMENT_ROOT: /var/www/html
     working_dir: /var/www/html
