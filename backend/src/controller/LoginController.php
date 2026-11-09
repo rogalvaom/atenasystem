@@ -44,23 +44,27 @@ class LoginController{
             $_SESSION['usuario'] =  $usuarioValidado;
             $_SESSION['modo'] = $modoValidado;
             echo json_encode([
-                "redirect" => "/home"
+                "access" => true,
+                "message" => "Login realizado com sucesso!"
             ]);
         }else{
             echo json_encode([
-                "redirect" => "/login?error=1"
+                "access" => false,
+                "message" => "Usuário ou senha incorretos."
             ]);
         }
     }
 
     function logout(){
-        session_start();
-        $_SESSION['usuario'] =  "";
+        if(!isset($_SESSION)) {
+            session_start();
+        }
+        $_SESSION['usuario'] = "";
         $_SESSION['modo'] = "";
         session_destroy();
-        // header('location:../index.php');
         echo json_encode([
-            "redirect" => "/login"
+            "access" => true,
+            "message" => "Logout realizado com sucesso!"
         ]);
     }
 
