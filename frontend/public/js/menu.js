@@ -56,17 +56,17 @@ function renderMenu(mode) {
     `;
 
     const logoutLink = nav.querySelector('#atn-logout-link');
-    logoutLink?.addEventListener('click', async function(event) {
+    logoutLink?.addEventListener('click', function(event) {
         event.preventDefault();
         logoutLink.setAttribute('aria-busy', 'true');
 
         try {
-            const response = await fetch('/api/logout', {
-                method: 'POST',
-                credentials: 'same-origin'
-            });
-            if (!response.ok) throw new Error('Falha ao encerrar a sessão.');
-            window.location.replace('/login');
+            const response = apiPost('/logout');
+            if (response && response.access) {
+                window.location.replace('/login');
+            } else {
+                throw new Error('Falha ao encerrar a sessão.');
+            }
         } catch {
             logoutLink.removeAttribute('aria-busy');
             alert('Não foi possível encerrar a sessão. Tente novamente.');
@@ -209,7 +209,7 @@ async function loadPageScript() {
     if (scriptPath) await import(scriptPath);
 
     if (path.startsWith('/certificado')) {
-        for (const src of ['/core/js/html2canvas.js', '/public/js/certificado.js']) {
+        for (const src of ['/core/html2canvas.js', '/public/js/certificado.js']) {
             await new Promise((resolve, reject) => {
                 const script = document.createElement('script');
                 script.src = src;

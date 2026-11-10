@@ -1,3 +1,3 @@
-env.php
-/vendor
-composer.lock
+env.js
+/tmp
+/storage

@@ -14,8 +14,8 @@ $(document).ready(function() {
             senha: md5(senha)
         });
 
-        if (response && response.redirect) {
-            window.location.assign(response.redirect);
+        if (response && response.access) {
+            window.location.assign('/home');
         } else {
             $("#msg-erro").show();
         }

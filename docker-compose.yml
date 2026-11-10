@@ -25,20 +25,12 @@ services:
   frontend:
     build:
       context: ./frontend/docker
-    image: atenasystem-frontend:8.2-apache
+    image: atenasystem-frontend:python
     container_name: atenasystem_frontend
     ports:
-      - "80:80"
+      - "80:8000"
     volumes:
-      - ./frontend:/var/www/html
-      - ./frontend/docker/apache-config:/etc/apache2/sites-enabled
-    environment:
-      APACHE_DOCUMENT_ROOT: /var/www/html
-    working_dir: /var/www/html
-    command: >
-      bash -c "
-      a2enmod rewrite && \
-      apache2-foreground"
+      - ./frontend:/app
     restart: always
     networks:
       - internal-network
