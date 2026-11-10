@@ -1,9 +1,9 @@
 <?php
 spl_autoload_register(function ($className) {
-    $projectRoot = dirname(__DIR__);
+    $projectRoot = __DIR__;
 
     $baseDirs = [
-        $projectRoot . '/core/lib/',
+        $projectRoot . '/core/',
         $projectRoot . '/src/controller/',  
         $projectRoot . '/src/model/',      
     ];

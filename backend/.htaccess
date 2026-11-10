@@ -1,4 +1,4 @@
 RewriteEngine on
 RewriteCond %(SCRIPT_FILENAME) !-f
 RewriteCond %(SCRIPT_FILENAME) !-d
-RewriteRule ^(.*)$ core/index.php [L]
+RewriteRule ^(.*)$ index.php [L]
